@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>IMG to Art</title>
+    <script src="js/lib/stackblur.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        const DEFAULT_VALUE = {
+            'x_ratio': 2,
+            'y_ratio': 4,
+            'min_val': 75,
+            'max_val': 130,
+            'gamma': 0.5,
+            'img_scale': 1,
+            'blend_ratio': 0.5
+        };
+
+        const ID = {
+            slider: 'slider_img',
+            slider_text: 'slider_img_text',
+            xy_slider: 'slider_xy',
+            xy_slider_text: 'slider_xy_text',
+            sel: 'sel_area',
+            div_art: 'div_art',
+            step1: 'step1btn',
+            step2: 'step2btn',
+            step3: 'step3btn',
+            page2: 'page2',
+            url: 'input_file_url',
+        };
+
+        const slider_p_text = ['image scale: '];
+
+        var app;
+        const img = new Image();
+        const is_first = true;
+    </script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/file.js"></script>
+    <script type="text/javascript" src="js/selArea.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+
+    <style>
+        body {
+            padding: 0 0 0 0;
+            margin: 0 0 0 0;
+            height: 100%;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-color: rgb(231, 231, 231);
+            text-align: center;
+        }
+
+        div {
+            font-family: monospace;
+            font-size: 0.5em;
+        }
+
+        img {
+            border: 3px solid #000000;
+            border-radius: 5px;
+        }
+
+        .slidecontainer {
+            width: 100%;
+            font-size: 1em;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .button2 {
+            display: inline-block;
+            padding: 15px 25px;
+            font-size: 24px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 9px #999;
+        }
+
+        .button2:hover {
+            background-color: #3e8e41
+        }
+
+        .button2:active {
+            background-color: #3e8e41;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+        #sel_area {
+            border: 1px dotted #000;
+            position: absolute;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Ubuntu&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <br><br>
+    <h3 style="font-family: 'Roboto Mono', monospace; font-family: 'Ubuntu', sans-serif;">Thank u ridhesh and cybe for making this website</h3>
+    <div id='page1'>
+        <h2 style='font-size: 4em;'>1. upload an image file</h2><br>
+        <span>
+            <input type="file" id="input_file" multiple="false" onchange="handleFiles(this.files)">
+        </span><br><br><br>
+        <span>
+            <input type="url" placeholder="url" id="input_file_url">
+            <input type="submit" onclick=handleUrl()>
+        </span><br><br>
+        <span style="display: inline-block; width: 250px; text-align: left;">
+            <button onclick="useExample1()">use exapmle image1</button>
+            <br><br>
+            <button onclick="useExample2()">use exapmle image2</button>
+
+        </span>
+    </div>
+    </div>
+    <div id='page2' style='height: 100vh;'>
+        <br><br><br><br><br><br><br><br>
+        <h2 style='font-size: 4em;'>2. clip image you like</h2>
+        <div class="slidecontainer" style='font-size: 2em;'>
+            <div style='font-size: 2em;'>
+                <span>image scale:&nbsp;</span>
+                <span id="slider_img_text"> 1&nbsp;</span>
+                <input type="range" min="1" max="3" value="1" class="slider" id="slider_img" style=' width: 40vw;
+                text-align: center;' oninput="alert('upload an image')">
+            </div>
+            <div style='font-size: 2em;'>
+                <span>xy ratio:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span id="slider_xy_text"> 2&nbsp;</span>
+                <input type="range" min="1" max="3" value="2" class="slider" id="slider_xy" style=' width: 40vw;
+                text-align: center;' oninput="alert('upload an image')">
+            </div>
+
+            <br><br>
+        </div>
+        <br>
+        <canvas id='cns1' style='touch-action: none;'></canvas>
+        <br><br>
+        <canvas id='cns2'></canvas>
+        <canvas id='cns3' style='display: none;'></canvas>
+        <br><br>
+        <div id='div_art'></div>
+        <div id="sel_area" hidden></div><br><br>
+    </div>
+    <br>
+</body>
+
+</html>
