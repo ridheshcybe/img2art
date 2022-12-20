@@ -33,10 +33,7 @@ class Elem {
         return this.ctx[index - 1];
     }
 
-
-    // --------------
     // draw func
-    // --------------
     clearCns(index) {
         this.ctx[index - 1].clearRect(0, 0, this.cns[index - 1].width, this.cns[index - 1].height);
     }
@@ -79,9 +76,7 @@ class Elem {
         this.rendImg(3, this.cns[0], 1, 1, true);
     }
 
-    // ---------------
     // slider func
-    // ---------------
     chgImgSize() {
         let v = document.getElementById(ID.slider).value;
         switch (v) {
